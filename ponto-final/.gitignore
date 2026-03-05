@@ -1,0 +1,64 @@
+Thumbs.db
+
+# dependencies
+node_modules/
+
+# env
+.env
+.env.*
+.env*.local
+.env.development
+.env.production
+.env.test
+
+# Expo
+.expo/
+.expo-shared/
+.expo-router/
+dist/
+web-build/
+expo-env.d.ts
+
+# Native
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Metro
+.metro-health-check*
+
+# debug
+*.log
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+pnpm-debug.log*
+
+# macOS
+.DS_Store
+*.pem
+
+# typescript
+*.tsbuildinfo
+
+# Build
+build/
+coverage/
+
+# generated native folders
+/ios
+/android
+
+# IDE
+.vscode/
+.idea/
+
+# misc
+*.swp
+*.swo
+
+app-example
