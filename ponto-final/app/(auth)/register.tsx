@@ -7,21 +7,32 @@ export default function RegisterScreen() {
     const [userType, setUserType] = useState<'cliente' | 'coletor'>('cliente');
     const [nome, setNome] = useState('');
     const [cpf, setCpf] = useState('');
+    const [cnpj, setCnpj] = useState('');
     const [celular, setCelular] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
 
     const handleRegister = async () => {
-        if (!nome || !cpf || !celular || !email || !password) {
+        const isDocumentoValido = userType === 'cliente' ? cpf.trim() !== '' : cnpj.trim() !== '';
+
+        if (!nome || !isDocumentoValido || !celular || !email || !password) {
             Alert.alert('Atenção', 'Preencha todos os campos para continuar.');
             return;
         }
 
         setLoading(true);
         try {
-            // O userType será passado para sabermos em qual tabela salvar depois
-            await signUp({ email, password, nome, celular, cpf, tipo: userType } as any);
+            const userData = {
+                email,
+                password,
+                nome,
+                celular,
+                tipo: userType,
+                ...(userType === 'cliente' ? { cpf } : { cnpj }),
+            }
+            // userType para saber em qual tabela salvar 
+            await signUp(userData as any);
 
             Alert.alert('Sucesso', 'Conta criada com sucesso!');
             router.back(); // Volta para a tela de login
@@ -80,16 +91,30 @@ export default function RegisterScreen() {
                         />
                     </View>
 
-                    <View>
-                        <Text className="text-black mb-1 font-semibold">CPF</Text>
-                        <TextInput
-                            className="w-full bg-[#EEEEEE] rounded-lg px-4 py-3 text-black border border-[#E2E2E2]"
-                            placeholder="000.000.000-00"
-                            keyboardType="numeric"
-                            value={cpf}
-                            onChangeText={setCpf}
-                        />
-                    </View>
+                    {/* Renderização Condicional do Documento (CPF ou CNPJ) */}
+                    {userType === 'cliente' ? (
+                        <View>
+                            <Text className="text-black mb-1 font-semibold">CPF</Text>
+                            <TextInput
+                                className="w-full bg-[#EEEEEE] rounded-lg px-4 py-3 text-black border border-[#E2E2E2]"
+                                placeholder="000.000.000-00"
+                                keyboardType="numeric"
+                                value={cpf}
+                                onChangeText={setCpf}
+                            />
+                        </View>
+                    ) : (
+                        <View>
+                            <Text className="text-black mb-1 font-semibold">CNPJ</Text>
+                            <TextInput
+                                className="w-full bg-[#EEEEEE] rounded-lg px-4 py-3 text-black border border-[#E2E2E2]"
+                                placeholder="00.000.000/0000-00"
+                                keyboardType="numeric"
+                                value={cnpj}
+                                onChangeText={setCnpj}
+                            />
+                        </View>
+                    )}
 
                     <View>
                         <Text className="text-black mb-1 font-semibold">Celular</Text>

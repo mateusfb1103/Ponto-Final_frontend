@@ -114,7 +114,7 @@ export default function LoginScreen() {
 
                 <TouchableOpacity
                     className="mt-4 items-center"
-                    onPress={() => router.push('./(auth)/register')}
+                    onPress={() => router.push('../(auth)/register')}
                 >
                     <Text className="text-[#297C2A] font-semibold">
                         Não tem uma conta? Cadastre-se
