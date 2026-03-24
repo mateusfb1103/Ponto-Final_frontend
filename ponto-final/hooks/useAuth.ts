@@ -1,71 +1,47 @@
 import { useEffect, useState } from 'react';
-import { Session, User } from '@supabase/supabase-js';
-import { supabase } from '../services/supabase';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type UserRole = 'cliente' | 'coletor' | null;
 
+// Sistema simples para avisar o aplicativo que o login/logout aconteceu
+const authListeners = new Set<() => void>();
+export const notifyAuthChange = () => authListeners.forEach(listener => listener());
+
 export function useAuth() {
-    const [session, setSession] = useState<Session | null>(null);
-    const [user, setUser] = useState<User | null>(null);
+    const [session, setSession] = useState<any>(null);
+    const [user, setUser] = useState<any>(null);
     const [role, setRole] = useState<UserRole>(null);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setSession(session);
-            setUser(session?.user ?? null);
-            if (session?.user) {
-                fetchUserRole(session.user.id);
-            } else {
-                setLoading(false);
-            }
-        });
-
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            setSession(session);
-            setUser(session?.user ?? null);
-            if (session?.user) {
-                fetchUserRole(session.user.id);
-            } else {
-                setRole(null);
-                setLoading(false);
-            }
-        });
-
-        return () => subscription.unsubscribe();
-    }, []);
-
-    // saber se o usuário é cliente ou coletor 
-    const fetchUserRole = async (userId: string) => {
+    const loadAuth = async () => {
+        setLoading(true);
         try {
-            const { data: cliente } = await supabase
-                .from('usuarios')
-                .select('id')
-                .eq('auth_id', userId)
-                .single();
-
-            if (cliente) {
-                setRole('cliente');
-                return;
-            }
-
-            const { data: coletor } = await supabase
-                .from('coletores')
-                .select('id')
-                .eq('auth_id', userId)
-                .single();
-
-            if (coletor) {
-                setRole('coletor');
+            const stored = await AsyncStorage.getItem('@mock_session');
+            if (stored) {
+                const data = JSON.parse(stored);
+                setSession({ access_token: 'mock-fake-token' });
+                setUser(data.user);
+                setRole(data.role);
             } else {
+                setSession(null);
+                setUser(null);
                 setRole(null);
             }
-        } catch (error) {
-            console.error('Erro ao buscar perfil do usuário:', error);
+        } catch (e) {
+            console.error('Erro ao carregar mock session', e);
         } finally {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        loadAuth(); // Carrega ao abrir o app
+        authListeners.add(loadAuth); // Fica escutando novos logins
+
+        return () => {
+            authListeners.delete(loadAuth);
+        };
+    }, []);
 
     return { session, user, role, loading };
 }
