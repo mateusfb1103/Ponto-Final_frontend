@@ -1,48 +1,56 @@
-import { supabase } from './supabase';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { notifyAuthChange } from '../hooks/useAuth';
 
 export interface SignUpData {
     email: string;
     password: string;
     nome: string;
     celular: string;
-    cpf: string;
+    tipo: 'cliente' | 'coletor';
+    cpf?: string;
+    cnpj?: string;
 }
 
-export async function signUp({ email, password, nome, celular, cpf }: SignUpData) {
-    const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-            data: {
-                nome,
-                celular,
-                cpf,
-            },
-        },
-    });
+// Simula a lentidão da internet (1 segundo)
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-    if (error) throw new Error(error.message);
-    return data;
+export async function signUp(data: SignUpData) {
+    await delay(1000);
+
+    const mockSession = {
+        user: { id: 'user-mock-123', email: data.email, nome: data.nome },
+        role: data.tipo
+    };
+
+    await AsyncStorage.setItem('@mock_session', JSON.stringify(mockSession));
+    notifyAuthChange(); // Avisa o layout para mudar de tela
+    return mockSession;
 }
 
 export async function signIn(email: string, password: string) {
-    const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-    });
+    await delay(1000);
 
-    if (error) throw new Error(error.message);
-    return data;
+    // Se você digitar "coletor" na senha, ele loga como coletor.
+    // Qualquer outra senha loga como cliente.
+    const tipo = password === 'coletor' ? 'coletor' : 'cliente';
+
+    const mockSession = {
+        user: { id: 'user-mock-123', email },
+        role: tipo
+    };
+
+    await AsyncStorage.setItem('@mock_session', JSON.stringify(mockSession));
+    notifyAuthChange(); // Avisa o layout para mudar de tela
+    return mockSession;
 }
 
 export async function signOut() {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw new Error(error.message);
+    await delay(500);
+    await AsyncStorage.removeItem('@mock_session');
+    notifyAuthChange();
 }
 
 export async function getSession() {
-    const { data, error } = await supabase.auth.getSession();
-    if (error) throw new Error(error.message);
-    return data.session;
+    const stored = await AsyncStorage.getItem('@mock_session');
+    return stored ? JSON.parse(stored) : null;
 }
-
