@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
 import { router } from 'expo-router';
 import { signIn } from '../../services/auth.service';
-import { supabase } from '../../services/supabase';
 
 export default function LoginScreen() {
     const [userType, setUserType] = useState<'cliente' | 'coletor'>('cliente');
@@ -18,24 +17,8 @@ export default function LoginScreen() {
 
         setLoading(true);
         try {
-            //autenticação no Supabase Auth
-            const { user } = await signIn(email, password);
-
-            const table = userType === 'cliente' ? 'usuarios' : 'coletores';
-            const { data, error } = await supabase
-                .from(table)
-                .select('*')
-                .eq('auth_id', user?.id)
-                .single();
-
-            if (error || !data) {
-                await supabase.auth.signOut();
-                throw new Error(`Nenhum ${userType} encontrado com essas credenciais.`);
-            }
-
-            Alert.alert('Sucesso', `Bem-vindo, ${data.nome}!`);
-            // router.replace(userType === 'cliente' ? '/(cliente)/home' : '/(coletor)/disponiveis');
-
+            await signIn(email, password);
+            
         } catch (error: any) {
             Alert.alert('Erro ao entrar', error.message);
         } finally {
