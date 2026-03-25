@@ -14,34 +14,32 @@ export default function RegisterScreen() {
     const [loading, setLoading] = useState(false);
 
     const handleRegister = async () => {
-        const isDocumentoValido = userType === 'cliente' ? cpf.trim() !== '' : cnpj.trim() !== '';
+    const isDocumentoValido = userType === 'cliente' ? cpf.trim() !== '' : cnpj.trim() !== '';
 
-        if (!nome || !isDocumentoValido || !celular || !email || !password) {
-            Alert.alert('Atenção', 'Preencha todos os campos para continuar.');
-            return;
-        }
+    if (!nome || !celular || !email || !password || !isDocumentoValido) {
+      Alert.alert('Atenção', 'Preencha todos os campos para continuar.');
+      return;
+    }
 
-        setLoading(true);
-        try {
-            const userData = {
-                email,
-                password,
-                nome,
-                celular,
-                tipo: userType,
-                ...(userType === 'cliente' ? { cpf } : { cnpj }),
-            }
-            // userType para saber em qual tabela salvar 
-            await signUp(userData as any);
+    setLoading(true);
+    try {
+      const userData = {
+        email,
+        password,
+        nome,
+        celular,
+        tipo: userType,
+        ...(userType === 'cliente' ? { cpf } : { cnpj })
+      };
 
-            Alert.alert('Sucesso', 'Conta criada com sucesso!');
-            router.back(); // Volta para a tela de login
-        } catch (error: any) {
-            Alert.alert('Erro ao cadastrar', error.message);
-        } finally {
-            setLoading(false);
-        }
-    };
+      await signUp(userData as any);
+            
+    } catch (error: any) {
+      Alert.alert('Erro ao cadastrar', error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
     return (
         <ScrollView className="flex-1 bg-white" showsVerticalScrollIndicator={false}>
