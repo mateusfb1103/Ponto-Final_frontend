@@ -10,7 +10,7 @@ export default function BottomNav() {
       <TouchableOpacity
         className="items-center justify-center p-2"
         activeOpacity={0.8}
-        // Já está na home, então pode deixar sem ação ou apenas recarregar
+        onPress={() => router.push('/(cliente)/home')}
       >
         <FontAwesome name="home" size={26} color="#297C2A" />
         <Text className="text-[#297C2A] text-xs font-bold mt-1">Início</Text>

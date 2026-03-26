@@ -19,7 +19,7 @@ export default function MapSection({ location, enderecoManual, onOpenEnderecoMod
         activeOpacity={0.7}
       >
         <Text className="text-gray-500 flex-1 font-medium" numberOfLines={1}>
-          {enderecoManual ? `📍 ${enderecoManual}` : '🔍 Digite o endereço manualmente...'}
+          {enderecoManual ? `📍 ${enderecoManual}` : 'Digite o endereço manualmente...'}
         </Text>
       </TouchableOpacity>
 
