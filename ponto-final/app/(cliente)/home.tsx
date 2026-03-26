@@ -5,6 +5,7 @@ import * as Location from 'expo-location';
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getSession, signOut } from '../../services/auth.service';
+import Loader from '../../components/common/loader';
 
 // Importando os ícones
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -139,10 +140,12 @@ export default function ClienteHomeScreen() {
             </Text>
           </TouchableOpacity>
 
-          <View className="h-48 bg-gray-200 rounded-2xl overflow-hidden border border-gray-300 shadow-sm">
+          <View className="h-[300px] bg-gray-200 rounded-2xl overflow-hidden border border-gray-300 shadow-sm">
             {location ? (
               <MapView
-                style={{ flex: 1 }}
+                style={{ 
+                  flex: 1
+                }}
                 initialRegion={{
                   latitude: location.coords.latitude,
                   longitude: location.coords.longitude,
@@ -151,11 +154,11 @@ export default function ClienteHomeScreen() {
                 }}
                 showsUserLocation={true}
               >
-                <Marker coordinate={location.coords} title="Local da Coleta" />
+                <Marker coordinate={location.coords} title="Local da Coleta"/>
               </MapView>
             ) : (
               <View className="flex-1 justify-center items-center">
-                <Text className="text-gray-500 font-medium">Buscando localização...</Text>
+                <Loader visible={true}/> 
               </View>
             )}
           </View>
