@@ -4,8 +4,6 @@ import * as Location from 'expo-location';
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getSession, signOut } from '../../services/auth.service';
-
-// Importando nossos novos componentes
 import MapSection from '@/components/cliente/mapSection';
 import ConfirmButton from '@/components/cliente/confirmButton';
 import ResiduesTable from '@/components/cliente/residuesTable';
@@ -14,22 +12,14 @@ import SacosModal from '@/components/cliente/bagsModal';
 
 export default function ClienteHomeScreen() {
   const [userName, setUserName] = useState('Cliente');
-
-  // Estados de Localização
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
   const [enderecoManual, setEnderecoManual] = useState('');
-
-  // Estados dos Pedidos
   const [qtdClasseA, setQtdClasseA] = useState(0);
   const [qtdClasseB, setQtdClasseB] = useState(0);
   const [qtdClasseCD, setQtdClasseCD] = useState(0);
-
-  // Estados de Visibilidade dos Modais
   const [modalEnderecoVisible, setModalEnderecoVisible] = useState(false);
   const [modalSacosVisible, setModalSacosVisible] = useState(false);
   const [modalPagamentoVisible, setModalPagamentoVisible] = useState(false);
-
-  // Estados de Pagamento
   const [metodoPagamento, setMetodoPagamento] = useState<'PIX' | 'CARTAO' | 'ENTREGA'>('PIX');
   const [isConfirming, setIsConfirming] = useState(false);
 
@@ -89,7 +79,6 @@ export default function ClienteHomeScreen() {
 
   return (
     <View className="flex-1 bg-[#F5F5F5]">
-      {/* Cabeçalho */}
       <View className="px-6 pt-16 pb-6 bg-[#297C2A] flex-row justify-between items-center shadow-sm z-10">
         <View>
           <Text className="text-white text-2xl font-bold">Olá, {userName}</Text>
@@ -121,8 +110,9 @@ export default function ClienteHomeScreen() {
       <BottomNav />
 
       {/* ----------------- MODAIS ----------------- */}
-
-      {/* Modal 1: Digitar Endereço */}
+      {/* SERÁ ALTERADO DEPOIS */}
+    
+      {/* Digitar Endereço */}
       <Modal animationType="fade" transparent={true} visible={modalEnderecoVisible}>
         <View className="flex-1 justify-center bg-black/50 px-6">
           <View className="bg-white rounded-2xl p-6 shadow-xl">
@@ -154,7 +144,7 @@ export default function ClienteHomeScreen() {
         </View>
       </Modal>
 
-      {/* Modal 2: Seleção de Sacos Desacoplado */}
+      {/* Seleção de Sacos */}
       <SacosModal
         visible={modalSacosVisible}
         onClose={() => setModalSacosVisible(false)}
@@ -171,7 +161,7 @@ export default function ClienteHomeScreen() {
         }}
       />
 
-      {/* Modal 3: Confirmação e Pagamento */}
+      {/* Confirmação e Pagamento */}
       <Modal animationType="slide" transparent={true} visible={modalPagamentoVisible}>
         <View className="flex-1 justify-end bg-black/50">
           <View className="bg-white rounded-t-3xl p-6 h-[80%]">
