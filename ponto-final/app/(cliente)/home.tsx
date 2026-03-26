@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, TextInput, ScrollView, Modal, ActivityIndicator } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getSession, signOut } from '../../services/auth.service';
-import Loader from '../../components/common/loader';
 
-// Importando os ícones
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+// Importando nossos novos componentes
+import MapSection from '@/components/cliente/mapSection';
+import ConfirmButton from '@/components/cliente/confirmButton';
+import ResiduesTable from '@/components/cliente/residuesTable';
+import BottomNav from '@/components/cliente/bottomNav';
+import SacosModal from '@/components/cliente/bagsModal';
 
 export default function ClienteHomeScreen() {
   const [userName, setUserName] = useState('Cliente');
@@ -62,29 +63,6 @@ export default function ClienteHomeScreen() {
     setModalSacosVisible(true);
   };
 
-  const renderCounter = (label: string, value: number, setter: (val: number) => void) => (
-    <View className="flex-row justify-between items-center bg-gray-50 p-4 mb-3 rounded-xl border border-gray-200">
-      <Text className="font-semibold text-black text-base flex-1">{label}</Text>
-      <View className="flex-row items-center gap-5">
-        <TouchableOpacity
-          onPress={() => setter(Math.max(0, value - 1))}
-          className="w-10 h-10 bg-white rounded-full items-center justify-center border border-gray-300 shadow-sm"
-          activeOpacity={0.8}
-        >
-          <Text className="font-bold text-xl text-gray-600">-</Text>
-        </TouchableOpacity>
-        <Text className="font-bold text-xl w-6 text-center">{value}</Text>
-        <TouchableOpacity
-          onPress={() => setter(value + 1)}
-          className="w-10 h-10 bg-[#297C2A] rounded-full items-center justify-center shadow-sm"
-          activeOpacity={0.8}
-        >
-          <Text className="font-bold text-white text-xl">+</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-
   const handleConfirmarColeta = async () => {
     setIsConfirming(true);
     setTimeout(async () => {
@@ -111,7 +89,7 @@ export default function ClienteHomeScreen() {
 
   return (
     <View className="flex-1 bg-[#F5F5F5]">
-      {/* Cabeçalho com Botão de Logout */}
+      {/* Cabeçalho */}
       <View className="px-6 pt-16 pb-6 bg-[#297C2A] flex-row justify-between items-center shadow-sm z-10">
         <View>
           <Text className="text-white text-2xl font-bold">Olá, {userName}</Text>
@@ -127,105 +105,24 @@ export default function ClienteHomeScreen() {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
-
-        {/* Seção do Mapa e Endereço */}
-        <View className="px-6 pt-6">
-          <TouchableOpacity
-            className="bg-white p-4 rounded-xl border border-gray-200 mb-4 shadow-sm flex-row items-center"
-            onPress={() => setModalEnderecoVisible(true)}
-            activeOpacity={0.7}
-          >
-            <Text className="text-gray-500 flex-1 font-medium" numberOfLines={1}>
-              {enderecoManual ? `📍 ${enderecoManual}` : '🔍 Digite o endereço manualmente...'}
-            </Text>
-          </TouchableOpacity>
-
-          <View className="h-[300px] bg-gray-200 rounded-2xl overflow-hidden border border-gray-300 shadow-sm">
-            {location ? (
-              <MapView
-                style={{ 
-                  flex: 1
-                }}
-                initialRegion={{
-                  latitude: location.coords.latitude,
-                  longitude: location.coords.longitude,
-                  latitudeDelta: 0.01,
-                  longitudeDelta: 0.01,
-                }}
-                showsUserLocation={true}
-              >
-                <Marker coordinate={location.coords} title="Local da Coleta"/>
-              </MapView>
-            ) : (
-              <View className="flex-1 justify-center items-center">
-                <Loader visible={true}/> 
-              </View>
-            )}
-          </View>
-
-          <TouchableOpacity
-            className="w-full bg-[#297C2A] rounded-xl py-4 mt-5 items-center shadow-sm"
-            onPress={abrirModalDeSacos}
-            activeOpacity={0.8}
-          >
-            <Text className="text-white font-bold text-lg">Confirmar Endereço</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Tabela de Resíduos Flutuante */}
-        <View className="px-6 mt-8">
-          <Text className="text-lg font-bold text-black mb-3">Guia de Resíduos</Text>
-          <View
-            className="rounded-xl overflow-hidden bg-white border border-gray-100"
-            style={{ elevation: 5, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.1, shadowRadius: 6 }}
-          >
-            <View className="flex-row bg-[#297C2A] p-3">
-              <Text className="flex-[1.2] text-white font-bold border-r border-white/30 pr-2">Tipo de Resíduo</Text>
-              <Text className="flex-[2] text-white font-bold pl-3">Resíduos</Text>
-            </View>
-            <View className="flex-row border-b border-gray-100 p-3 bg-white">
-              <Text className="flex-[1.2] font-semibold text-gray-800 border-r border-gray-200 pr-2">Classe A</Text>
-              <Text className="flex-[2] pl-3 text-gray-600 text-sm">Argamassa, concreto, bloco, tijolo e solo (terra)</Text>
-            </View>
-            <View className="flex-row border-b border-gray-100 p-3 bg-gray-50/50">
-              <Text className="flex-[1.2] font-semibold text-gray-800 border-r border-gray-200 pr-2">Classe B</Text>
-              <Text className="flex-[2] pl-3 text-gray-600 text-sm">Plásticos, papel, papelão, metais, vidros, gesso e madeiras</Text>
-            </View>
-            <View className="flex-row p-3 bg-white">
-              <Text className="flex-[1.2] font-semibold text-gray-800 border-r border-gray-200 pr-2">Classe C/D</Text>
-              <Text className="flex-[2] pl-3 text-gray-600 text-sm">Tintas, solventes, óleos, telhas de amianto e lixo hospitalar</Text>
-            </View>
-          </View>
-        </View>
+        
+        <MapSection 
+          location={location} 
+          enderecoManual={enderecoManual} 
+          onOpenEnderecoModal={() => setModalEnderecoVisible(true)} 
+        />
+        
+        <ConfirmButton onPress={abrirModalDeSacos} />
+        
+        <ResiduesTable />
 
       </ScrollView>
 
-      {/* ----------------- RODAPÉ DE NAVEGAÇÃO ----------------- */}
-      <View className="flex-row bg-white border-t border-gray-200 py-3 pb-6 px-6 justify-around items-center shadow-lg">
-        {/* Botão Home */}
-        <TouchableOpacity
-          className="items-center justify-center p-2"
-          activeOpacity={0.8}
-        >
-          <FontAwesome name="home" size={26} color="#297C2A" />
-          <Text className="text-[#297C2A] text-xs font-bold mt-1">Início</Text>
-        </TouchableOpacity>
-
-        {/* Botão Lista */}
-        <TouchableOpacity
-          className="items-center justify-center p-2"
-          onPress={() => router.push('/(cliente)/minhas-coletas')}
-          activeOpacity={0.8}
-        >
-          <FontAwesome5 name="list-alt" size={24} color="#297C2A" />
-          <Text className="text-[#297C2A] text-xs font-bold mt-1">Pedidos</Text>
-        </TouchableOpacity>
-      </View>
-
+      <BottomNav />
 
       {/* ----------------- MODAIS ----------------- */}
 
-      {/* Digitar Endereço */}
+      {/* Modal 1: Digitar Endereço */}
       <Modal animationType="fade" transparent={true} visible={modalEnderecoVisible}>
         <View className="flex-1 justify-center bg-black/50 px-6">
           <View className="bg-white rounded-2xl p-6 shadow-xl">
@@ -257,41 +154,24 @@ export default function ClienteHomeScreen() {
         </View>
       </Modal>
 
-      {/* Seleção de Sacos (Bottom Sheet) */}
-      <Modal animationType="slide" transparent={true} visible={modalSacosVisible}>
-        <View className="flex-1 justify-end bg-black/50">
-          <View className="bg-white rounded-t-3xl p-6 pb-10 shadow-lg">
-            <View className="flex-row justify-between items-center mb-6">
-              <Text className="text-xl font-bold text-black">Quantidade de Sacos</Text>
-              <TouchableOpacity
-                onPress={() => setModalSacosVisible(false)}
-                className="w-8 h-8 bg-gray-200 rounded-full items-center justify-center"
-                activeOpacity={0.8}
-              >
-                <Text className="text-gray-600 font-bold">X</Text>
-              </TouchableOpacity>
-            </View>
+      {/* Modal 2: Seleção de Sacos Desacoplado */}
+      <SacosModal
+        visible={modalSacosVisible}
+        onClose={() => setModalSacosVisible(false)}
+        qtdClasseA={qtdClasseA}
+        setQtdClasseA={setQtdClasseA}
+        qtdClasseB={qtdClasseB}
+        setQtdClasseB={setQtdClasseB}
+        qtdClasseCD={qtdClasseCD}
+        setQtdClasseCD={setQtdClasseCD}
+        podeSolicitar={podeSolicitar}
+        onSubmit={() => {
+          setModalSacosVisible(false);
+          setTimeout(() => setModalPagamentoVisible(true), 300);
+        }}
+      />
 
-            {renderCounter('Classe A', qtdClasseA, setQtdClasseA)}
-            {renderCounter('Classe B', qtdClasseB, setQtdClasseB)}
-            {renderCounter('Classe C/D', qtdClasseCD, setQtdClasseCD)}
-
-            <TouchableOpacity
-              className={`w-full rounded-xl py-4 mt-6 items-center shadow-sm ${podeSolicitar ? 'bg-[#297C2A]' : 'bg-gray-400'}`}
-              disabled={!podeSolicitar}
-              activeOpacity={0.8}
-              onPress={() => {
-                setModalSacosVisible(false); // Fecha os sacos
-                setTimeout(() => setModalPagamentoVisible(true), 300); // Abre o pagamento
-              }}
-            >
-              <Text className="text-white font-bold text-lg">SOLICITAR COLETA</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
-      {/* Confirmação e Pagamento */}
+      {/* Modal 3: Confirmação e Pagamento */}
       <Modal animationType="slide" transparent={true} visible={modalPagamentoVisible}>
         <View className="flex-1 justify-end bg-black/50">
           <View className="bg-white rounded-t-3xl p-6 h-[80%]">
