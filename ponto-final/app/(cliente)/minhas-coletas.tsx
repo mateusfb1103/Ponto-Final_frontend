@@ -3,6 +3,7 @@ import { View, Text, FlatList, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BottomNav from '@/components/cliente/bottomNav';
 import CardColeta, { Pedido } from '@/components/cliente/cardColeta';
+import { router } from 'expo-router';
 
 export default function MinhasColetasScreen() {
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
@@ -17,7 +18,7 @@ export default function MinhasColetasScreen() {
       const dados = await AsyncStorage.getItem('@mock_pedidos');
       let pedidosSalvos = dados ? JSON.parse(dados) : [];
 
-      // Injeta um pedido falso (Mock)
+      // Injeta um pedido falso
       if (pedidosSalvos.length === 0) {
         pedidosSalvos = [
           {
@@ -32,6 +33,8 @@ export default function MinhasColetasScreen() {
             valor: 'R$ 120,00'
           }
         ];
+        
+        await AsyncStorage.setItem('@mock_pedidos', JSON.stringify(pedidosSalvos));
       }
 
       setPedidos(pedidosSalvos);
@@ -59,7 +62,7 @@ export default function MinhasColetasScreen() {
         renderItem={({ item }) => (
           <CardColeta 
             item={item} 
-            onPress={() => alert(`Detalhes do pedido ${item.id}`)} 
+            onPress={() => router.push({ pathname: '/(cliente)/coleta-detalhe', params: { id: item.id } })} 
           />
         )}
         contentContainerStyle={{ padding: 20 }}
