@@ -27,22 +27,28 @@ export async function signUp(data: SignUpData) {
     return mockSession;
 }
 
-export async function signIn(email: string, password: string) {
-    await delay(1000);
+export const signIn = async (
+    email: string,
+    password: string,
+    role: 'cliente' | 'coletor'
+) => {
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
-    // Se você digitar "coletor" na senha, ele loga como coletor.
-    // Qualquer outra senha loga como cliente.
-    const tipo = password === 'coletor' ? 'coletor' : 'cliente';
-
-    const mockSession = {
-        user: { id: 'user-mock-123', email },
-        role: tipo
+    const mockUser = {
+        id: '123',
+        email,
+        nome: role === 'cliente' ? 'João (Cliente)' : 'Carlos (Coletor)',
     };
 
-    await AsyncStorage.setItem('@mock_session', JSON.stringify(mockSession));
-    notifyAuthChange(); // Avisa o layout para mudar de tela
-    return mockSession;
-}
+    const sessionData = {
+        user: mockUser,
+        role: role
+    };
+
+    await AsyncStorage.setItem('@mock_session', JSON.stringify(sessionData));
+    notifyAuthChange();
+    return { user: mockUser };
+};
 
 export async function signOut() {
     await delay(500);
