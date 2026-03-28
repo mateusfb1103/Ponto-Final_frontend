@@ -17,8 +17,7 @@ export default function LoginScreen() {
 
         setLoading(true);
         try {
-            await signIn(email, password);
-            
+            await signIn(email, password, userType);
         } catch (error: any) {
             Alert.alert('Erro ao entrar', error.message);
         } finally {
