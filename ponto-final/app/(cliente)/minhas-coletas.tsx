@@ -10,6 +10,7 @@ export default function MinhasColetasScreen() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // AsyncStorage.removeItem('@mock_pedidos'); // Limpa os pedidos antigos 
     carregarPedidos();
   }, []);
 
@@ -18,7 +19,6 @@ export default function MinhasColetasScreen() {
       const dados = await AsyncStorage.getItem('@mock_pedidos');
       let pedidosSalvos = dados ? JSON.parse(dados) : [];
 
-      // Injeta um pedido falso
       if (pedidosSalvos.length === 0) {
         pedidosSalvos = [
           {
@@ -72,7 +72,6 @@ export default function MinhasColetasScreen() {
         }
       />
       
-      {/* Componente Desacoplado do Rodapé */}
       <BottomNav />
     </View>
   );
