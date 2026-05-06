@@ -57,20 +57,20 @@ export default function CardColeta({ item, onPress }: CardColetaProps) {
 
       {item.status === 'ACEITO' && item.empresaColetora && (
         <View className="bg-indigo-50 p-4 rounded-xl mb-3 border border-indigo-100">
-          <Text className="font-bold text-indigo-900 text-base mb-1">🚚 {item.empresaColetora}</Text>
+          <Text className="font-bold text-indigo-900 text-base mb-1">{item.empresaColetora}</Text>
           {item.motorista && (
             <Text className="text-indigo-800 font-medium text-sm mb-2">Motorista: {item.motorista}</Text>
           )}
           <View className="flex-row justify-between bg-white/60 p-2 rounded-lg mt-1">
             <Text className="text-indigo-700 text-xs font-bold">📍 {item.distancia}</Text>
-            <Text className="text-indigo-700 text-xs font-bold">💰 {item.valor}</Text>
+            <Text className="text-indigo-700 text-xs font-bold"> {item.valor}</Text>
           </View>
         </View>
       )}
 
       <Text className="text-gray-600 text-sm mb-1">📍 {item.endereco}</Text>
       <Text className="text-gray-500 text-sm mt-2 font-medium">
-        📦 {item.itens.classeA + item.itens.classeB + item.itens.classeCD} sacos totais
+        {item.itens.classeA + item.itens.classeB + item.itens.classeCD} sacos totais
       </Text>
     </TouchableOpacity>
   );

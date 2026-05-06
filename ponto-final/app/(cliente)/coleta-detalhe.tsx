@@ -139,7 +139,7 @@ export default function ColetaDetalheScreen() {
                   <Text className="text-indigo-800 font-bold">{pedido.distancia}</Text>
                 </View>
                 <View className="items-end">
-                  <Text className="text-indigo-400 text-xs font-semibold uppercase">Valor Acordado</Text>
+                  <Text className="text-indigo-400 text-xs font-semibold uppercase">Valor</Text>
                   <Text className="text-indigo-800 font-bold">{pedido.valor}</Text>
                 </View>
               </View>
@@ -150,7 +150,7 @@ export default function ColetaDetalheScreen() {
           <View>
             <Text className="text-gray-400 text-xs font-bold uppercase mb-2">Local de Retirada</Text>
             <View className="flex-row items-center gap-3">
-              <FontAwesome5 name="map-marker-alt" size={20} color="#EF4444" />
+              <FontAwesome5 name="map-marker-alt" size={15} color="#EF4444" />
               <Text className="text-gray-800 font-semibold text-base flex-1">{pedido.endereco}</Text>
             </View>
           </View>

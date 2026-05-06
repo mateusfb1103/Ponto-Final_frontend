@@ -33,7 +33,7 @@ export default function ColetorDisponiveisScreen() {
       </View>
       
       <Text className="text-gray-700 mb-1 font-medium">📍 {item.endereco}</Text>
-      <Text className="text-gray-500 text-sm mb-5">📦 {item.materiais}</Text>
+      <Text className="text-gray-500 text-sm mb-5">  {item.materiais}</Text>
 
       <TouchableOpacity
         className="w-full bg-[#297C2A] rounded-lg py-3 items-center"
